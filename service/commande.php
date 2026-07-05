@@ -35,4 +35,5 @@ function mettreAJourStatutsLivraisons() {
             }
         }
     }
+    unset($commande);
 }

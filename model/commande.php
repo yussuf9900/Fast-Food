@@ -42,9 +42,11 @@ function updateCommandeStatus($id_commande, $statut) {
     foreach ($_SESSION['commandes'] as &$commande) {
         if ($commande['id_commande'] === $id_commande) {
             $commande['statut'] = $statut;
+            unset($commande);
             return true;
         }
     }
+    unset($commande);
     return false;
 }
 
@@ -52,9 +54,11 @@ function updateCommandeLivreur($id_commande, $id_livreur) {
     foreach ($_SESSION['commandes'] as &$commande) {
         if ($commande['id_commande'] === $id_commande) {
             $commande['id_livreur'] = $id_livreur;
+            unset($commande);
             return true;
         }
     }
+    unset($commande);
     return false;
 }
 
@@ -62,8 +66,10 @@ function enregistrerDateLivraison($id_commande) {
     foreach ($_SESSION['commandes'] as &$commande) {
         if ($commande['id_commande'] === $id_commande) {
             $commande['livraison_commencee_a'] = time();
+            unset($commande);
             return true;
         }
     }
+    unset($commande);
     return false;
 }

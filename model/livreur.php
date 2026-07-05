@@ -37,8 +37,10 @@ function updateLivreurStatus($id, $disponible) {
     foreach ($_SESSION['livreurs'] as &$livreur) {
         if ($livreur['id'] == $id) {
             $livreur['disponible'] = $disponible;
+            unset($livreur);
             return true;
         }
     }
+    unset($livreur);
     return false;
 }
