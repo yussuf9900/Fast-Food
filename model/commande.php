@@ -57,3 +57,13 @@ function updateCommandeLivreur($id_commande, $id_livreur) {
     }
     return false;
 }
+
+function enregistrerDateLivraison($id_commande) {
+    foreach ($_SESSION['commandes'] as &$commande) {
+        if ($commande['id_commande'] === $id_commande) {
+            $commande['livraison_commencee_a'] = time();
+            return true;
+        }
+    }
+    return false;
+}

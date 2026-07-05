@@ -180,7 +180,21 @@ function afficherEspaceClientWeb($plats, $panier, $commandesClient, $messageSucc
                     <?php endif; ?>
                 </div>
             </div>
-        </main>
+        <?php
+        $aDesLivraisonsEnCours = false;
+        foreach ($commandesClient as $cmd) {
+            if ($cmd['statut'] === 'En livraison') {
+                $aDesLivraisonsEnCours = true;
+                break;
+            }
+        }
+        if ($aDesLivraisonsEnCours): ?>
+            <script>
+                setTimeout(function() {
+                    window.location.reload();
+                }, 5000);
+            </script>
+        <?php endif; ?>
     </body>
     </html>
     <?php

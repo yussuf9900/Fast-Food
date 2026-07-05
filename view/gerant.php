@@ -210,7 +210,21 @@ function afficherEspaceGerantWeb($plats, $commandes, $livreurs, $messageSucces =
                     </div>
                 </div>
             </div>
-        </main>
+        <?php
+        $aDesLivraisonsEnCours = false;
+        foreach ($commandes as $cmd) {
+            if ($cmd['statut'] === 'En livraison') {
+                $aDesLivraisonsEnCours = true;
+                break;
+            }
+        }
+        if ($aDesLivraisonsEnCours): ?>
+            <script>
+                setTimeout(function() {
+                    window.location.reload();
+                }, 5000);
+            </script>
+        <?php endif; ?>
     </body>
     </html>
     <?php

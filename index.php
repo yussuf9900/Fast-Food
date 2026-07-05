@@ -26,6 +26,7 @@ require_once __DIR__ . '/controller/auth.php';
 if (php_sapi_name() === 'cli') {
     executerAuthentification();
 } else {
+    mettreAJourStatutsLivraisons();
     $erreurLogin = null;
     $messageSucces = null;
     $messageErreur = null;
@@ -149,6 +150,7 @@ if (php_sapi_name() === 'cli') {
                         updateCommandeLivreur($idCommande, $idLivreur);
                         updateCommandeStatus($idCommande, 'En livraison');
                         updateLivreurStatus($idLivreur, false);
+                        enregistrerDateLivraison($idCommande);
                         $_SESSION['message_succes'] = "Livreur assigné et commande en livraison.";
                     } else {
                         $_SESSION['message_erreur'] = "Le livreur sélectionné n'est pas disponible.";
