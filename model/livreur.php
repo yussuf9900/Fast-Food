@@ -5,7 +5,11 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['livreurs'])) {
-    $_SESSION['livreurs'] = [];
+    $_SESSION['livreurs'] = [
+        ['id' => 1, 'nom' => 'Lamine', 'disponible' => true],
+        ['id' => 2, 'nom' => 'Moussa', 'disponible' => true],
+        ['id' => 3, 'nom' => 'Fatou', 'disponible' => false]
+    ];
 }
 
 function getLivreurs() {
