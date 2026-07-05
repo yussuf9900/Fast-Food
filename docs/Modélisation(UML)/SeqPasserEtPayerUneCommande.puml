@@ -1,0 +1,61 @@
+@startuml
+skinparam maxmessagesize 150
+skinparam monochrome true
+
+actor "Client" as Client
+participant "Front Controller" as FC
+participant "Contrôleur\nCommande" as Ctrl
+participant "Vue\nCatalogue & Panier" as VueCat
+participant "Vue\nPaiement" as VuePaie
+participant "Validateur" as Val
+participant "Modèle\nCommande" as Mod
+participant "Tableau Global\n(Mémoire)" as Memoire
+actor "API\nBancaire" as Banque
+
+== 1. Choix des plats (Passer la commande) ==
+Client -> FC : demander_page(page="catalogue")
+FC -> Ctrl : router_vers_controleur("catalogue")
+Ctrl -> VueCat : charger_vue("vue_catalogue", liste_plats)
+VueCat --> Client : Affiche le menu du Fast-Food
+
+Client -> VueCat : cliquer_ajouter_panier(id_plat, quantite)
+VueCat -> FC : envoyer_requete(action="ajouter_panier", id_plat, quantite)
+FC -> Ctrl : router_vers_action("ajouter_panier", id_plat, quantite)
+Ctrl -> Memoire : stocker_en_session(panier, id_plat, quantite)
+Ctrl -> VueCat : actualiser_panier()
+VueCat --> Client : Affiche le panier mis à jour avec les plats ajoutés
+
+== 2. Affichage de la page de paiement ==
+Client -> VueCat : cliquer_bouton("Payer la commande")
+VueCat -> FC : demander_page(page="paiement_panier")
+FC -> Ctrl : router_vers_controleur("paiement")
+Ctrl -> VuePaie : charger_vue("vue_paiement", donnees_panier)
+VuePaie --> Client : Affiche le formulaire de carte bancaire
+
+== 3. Soumission et Validation du Paiement ==
+Client -> VuePaie : soumettre_paiement(numero_carte, date, cvv)
+VuePaie -> FC : envoyer_requete(action="traiter_paiement", donnees_bancaires)
+FC -> Ctrl : router_vers_action("traiter_paiement", donnees_bancaires)
+
+Ctrl -> Val : valider_format_carte(donnees_bancaires)
+Val --> Ctrl : return true (données valides)
+
+== 4. Traitement Bancaire et Sauvegarde ==
+Ctrl -> Banque : process_payment(donnees_bancaires, montant_total)
+Banque --> Ctrl : return (statut="Accepte", id_transaction="TX-9982")
+
+alt Paiement Réussi
+    Ctrl -> Mod : creer_commande_complete(panier, id_client, id_transaction)
+    Mod -> Memoire : insert_commande(statut="En attente")
+    Memoire --> Mod : return true
+    Mod -> Memoire : insert_lignes_commande(panier)
+    Memoire --> Mod : return true
+    Mod --> Ctrl : return id_commande
+    
+    Ctrl -> VuePaie : charger_vue("vue_succes", id_commande)
+    VuePaie --> Client : Affiche "Commande #id confirmée et payée"
+else Paiement Refusé
+    Ctrl -> VuePaie : charger_vue("vue_erreur", message="Fonds insuffisants")
+    VuePaie --> Client : Affiche l'erreur et propose de réessayer
+end
+@enduml

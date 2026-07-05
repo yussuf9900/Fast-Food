@@ -1,0 +1,35 @@
+@startuml
+skinparam maxmessagesize 150
+skinparam monochrome true
+
+actor "Gérant" as Gerant
+participant "Front Controller" as FC
+participant "Contrôleur\nCatalogue" as Ctrl
+participant "Vue\nFormulaire Plat" as Vue
+participant "Validateur" as Val
+participant "Modèle\nPlat" as Mod
+participant "Tableau Global\n(Mémoire)" as Memoire
+
+== 1. Accès au formulaire ==
+Gerant -> FC : demander_page(page="ajout_plat")
+FC -> Ctrl : router_vers_controleur("catalogue")
+Ctrl -> Vue : charger_vue("vue_ajout_plat")
+Vue --> Gerant : Affiche le formulaire vierge
+
+== 2. Soumission et Traitement ==
+Gerant -> Vue : soumettre_plat(nom="Burger", prix=3500, desc="...")
+Vue -> FC : envoyer_requete(action="sauvegarder_plat", donnees_plat)
+FC -> Ctrl : router_vers_action("sauvegarder_plat", donnees_plat)
+
+Ctrl -> Val : valider_donnees(nom, prix, desc)
+Val --> Ctrl : return true (données conformes)
+
+Ctrl -> Mod : instancier_nouveau_plat(nom, prix, desc)
+Mod -> Memoire : array_push($stockage_plats, nouveau_plat)
+Memoire --> Mod : return true
+Mod --> Ctrl : return true (plat enregistré)
+
+== 3. Mise à jour de l'interface ==
+Ctrl -> Vue : charger_vue("vue_succes_catalogue")
+Vue --> Gerant : Affiche "Nouveau plat ajouté au menu"
+@enduml

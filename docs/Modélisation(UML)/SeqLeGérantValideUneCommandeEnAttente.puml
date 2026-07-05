@@ -1,0 +1,35 @@
+@startuml
+skinparam maxmessagesize 150
+skinparam monochrome true
+
+actor "Gérant" as Gerant
+participant "Front Controller" as FC
+participant "Contrôleur\nCommande" as Ctrl
+participant "Vue\nTableau de Bord" as Vue
+participant "Modèle\nCommande" as Mod
+participant "Tableau Global\n(Mémoire)" as Memoire
+
+== 1. Affichage des commandes en attente ==
+Gerant -> FC : demander_page(page="tableau_bord")
+FC -> Ctrl : router_vers_controleur("commande")
+Ctrl -> Mod : get_commandes_en_attente()
+Mod -> Memoire : array_filter($stockage_commandes, par_statut="En attente")
+Memoire --> Mod : liste_commandes
+Mod --> Ctrl : return liste_commandes
+Ctrl -> Vue : charger_vue("vue_tableau_bord", liste_commandes)
+Vue --> Gerant : Affiche la liste des commandes en attente
+
+== 2. Validation manuelle de la commande ==
+Gerant -> Vue : cliquer_valider(id_commande)
+Vue -> FC : envoyer_requete(action="valider_commande", id_commande)
+FC -> Ctrl : router_vers_action("valider_commande", id_commande)
+
+Ctrl -> Mod : update_statut_commande(id_commande, "En préparation")
+Mod -> Memoire : update_commande(id_commande, statut="En préparation")
+Memoire --> Mod : return true (Mise à jour réussie)
+Mod --> Ctrl : return true
+
+== 3. Mise à jour de l'interface ==
+Ctrl -> Vue : charger_vue("vue_succes_validation")
+Vue --> Gerant : Affiche un message "Commande validée et passée en préparation"
+@enduml

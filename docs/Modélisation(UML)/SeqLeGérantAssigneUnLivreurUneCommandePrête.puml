@@ -1,0 +1,38 @@
+@startuml
+skinparam maxmessagesize 150
+skinparam monochrome true
+
+actor "Gérant" as Gerant
+participant "Front Controller" as FC
+participant "Contrôleur\nLivraison" as Ctrl
+participant "Vue\nAssignation" as Vue
+participant "Modèle\nLivreur" as ModLiv
+participant "Modèle\nCommande" as ModCmd
+participant "Tableau Global\n(Mémoire)" as Memoire
+
+== 1. Demande d'assignation ==
+Gerant -> Vue : selectionner_livreur_et_assigner(id_commande, id_livreur)
+Vue -> FC : envoyer_requete(action="assigner_livreur", id_commande, id_livreur)
+FC -> Ctrl : router_vers_action("assigner_livreur", id_commande, id_livreur)
+
+== 2. Vérification de la disponibilité du livreur ==
+Ctrl -> ModLiv : verifier_disponibilite(id_livreur)
+ModLiv -> Memoire : select_statut_livreur(id_livreur)
+Memoire --> ModLiv : return (statut="Disponible")
+ModLiv --> Ctrl : return true (Livreur disponible)
+
+== 3. Traitement de l'assignation et mise à jour des statuts ==
+Ctrl -> ModCmd : assigner_livreur_commande(id_commande, id_livreur)
+ModCmd -> Memoire : update_commande(id_commande, id_livreur, statut="En livraison")
+Memoire --> ModCmd : return true
+ModCmd --> Ctrl : return true
+
+Ctrl -> ModLiv : update_statut_livreur(id_livreur, "En course")
+ModLiv -> Memoire : update_livreur(id_livreur, statut="En course")
+Memoire --> ModLiv : return true
+ModLiv --> Ctrl : return true
+
+== 4. Affichage du résultat ==
+Ctrl -> Vue : charger_vue("vue_succes_assignation")
+Vue --> Gerant : Affiche "Livreur assigné et commande en route"
+@enduml

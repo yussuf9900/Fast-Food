@@ -1,0 +1,51 @@
+@startuml use case
+left to right direction
+skinparam packageStyle rectangle
+skinparam monochrome true
+skinparam shadowing false
+
+actor "Client" as C
+actor "Gérant" as G
+actor "Livreur" as L
+actor "Système Bancaire" as Banque
+
+package "Système de Commande Fast-Food" {
+    
+    ' Cas d'utilisation du Client
+    usecase "Consulter le menu" as UC_ConsulterMenu
+    usecase "Passer une commande" as UC_PasserCommande
+    usecase "Payer en ligne par carte" as UC_Payer
+    usecase "Consulter l'historique des commandes" as UC_Historique
+    
+    ' Cas d'utilisation du Gérant
+    usecase "Gérer le catalogue" as UC_GererCatalogue
+    usecase "Ajouter de nouveaux plats" as UC_AjouterPlat
+    usecase "Lister les commandes en attente" as UC_ListerCommandes
+    usecase "Valider une commande manuellement" as UC_ValiderCommande
+    usecase "Assigner un livreur" as UC_AssignerLivreur
+    usecase "Acheminer le repas" as UC9
+}
+
+' Relations du Client
+C --> UC_ConsulterMenu
+C --> UC_PasserCommande
+C --> UC_Historique
+
+' Inclusion du paiement
+UC_PasserCommande ..> UC_Payer : <<include>>
+UC_Payer --> Banque
+
+' Relations du Gérant
+G --> UC_GererCatalogue
+' Extension du catalogue
+UC_GererCatalogue <.. UC_AjouterPlat : <<extend>>
+
+G --> UC_ListerCommandes
+G --> UC_ValiderCommande
+G --> UC_AssignerLivreur
+
+' Relation avec le livreur
+UC_AssignerLivreur --> L
+L --> UC9
+
+@enduml

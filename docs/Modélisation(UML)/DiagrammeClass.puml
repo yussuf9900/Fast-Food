@@ -1,0 +1,72 @@
+@startuml Diagram Class
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome true
+
+class Utilisateur {
+  - id : int
+  - nom : String
+  - prenom : String
+  - email : String
+  - motDePasse : String
+  - telephone : String
+}
+
+class Client {
+  - adresseLivraisonParDefaut : String
+}
+
+class Gerant {
+  - niveauAcces : int
+}
+
+class Livreur {
+  - statutDisponibilite : String
+  - vehicule : String
+}
+
+class Plat {
+  - id : int
+  - nom : String
+  - description : String
+  - prix : float
+  - estDisponible : boolean
+  - categorie : String
+}
+
+class Commande {
+  - id : int
+  - dateHeureCreation : DateTime
+  - statut : String
+  - montantTotal : float
+  - adresseLivraison : String
+}
+
+class LigneCommande {
+  - quantite : int
+  - sousTotal : float
+  - instructionsSpeciales : String
+}
+
+class Paiement {
+  - idTransaction : String
+  - montantPaye : float
+  - datePaiement : DateTime
+  - methode : String
+  - statut : String
+}
+
+Utilisateur <|-- Client
+Utilisateur <|-- Gerant
+Utilisateur <|-- Livreur
+
+Client "1" -- "*" Commande : passe >
+Gerant "1" -- "*" Plat : gere >
+Gerant "1" -- "*" Commande : supervise >
+Livreur "0..1" -- "*" Commande : achemine >
+
+Commande "1" *-- "1..*" LigneCommande : contient >
+LigneCommande "*" -- "1" Plat : reference >
+Commande "1" -- "1" Paiement : est reglee par >
+
+@enduml
