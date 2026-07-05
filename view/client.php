@@ -6,189 +6,273 @@ require_once __DIR__ . '/../service/commande.php';
 
 function afficherEspaceClientWeb($plats, $panier, $commandesClient, $messageSucces = null, $messageErreur = null) {
     $totalPanier = calculerTotalCommande($panier);
+    $nombreArticles = 0;
+    foreach ($panier as $ligne) {
+        $nombreArticles += $ligne['quantite'];
+    }
     ?>
     <!DOCTYPE html>
-    <html lang="fr" class="h-full bg-slate-950 text-slate-100">
+    <html lang="fr" class="h-full bg-[#f4f6fa] text-slate-800">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Fast-Food Express - Espace Client</title>
+        <title>Fast-Food App</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
         <style>
             body { font-family: 'Outfit', sans-serif; }
         </style>
     </head>
-    <body class="h-full flex flex-col bg-slate-950">
-        <header class="bg-slate-900/60 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl font-black bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Fast-Food Express</span>
-                    <span class="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs px-2.5 py-1 rounded-full font-semibold">Client</span>
+    <body class="min-h-full flex flex-col bg-[#f4f6fa]">
+        <!-- Header -->
+        <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-black text-slate-800">
+                        🍔 <span class="text-[#c2272d]">Fast-Food</span> App
+                    </span>
                 </div>
-                <form action="index.php" method="POST">
-                    <input type="hidden" name="action" value="logout">
-                    <button type="submit" class="px-4 py-2 bg-slate-850 hover:bg-red-500/10 hover:text-red-400 border border-slate-800 hover:border-red-500/20 rounded-xl text-sm font-semibold transition-all duration-300">
-                        Se déconnecter
-                    </button>
-                </form>
+                <div class="flex items-center gap-6">
+                    <a href="#menu" class="text-sm font-bold text-[#c2272d] border-b-2 border-[#c2272d] pb-1">Accueil</a>
+                    <a href="#commandes" class="text-sm font-bold text-slate-500 hover:text-slate-800">Historique</a>
+                    
+                    <a href="#panier" class="px-5 py-2.5 bg-[#c2272d] hover:bg-[#a61f24] text-white font-bold rounded-full text-sm transition-all duration-300 shadow-md flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Panier (<?php echo $nombreArticles; ?>)
+                    </a>
+
+                    <form action="index.php" method="POST" class="inline">
+                        <input type="hidden" name="action" value="logout">
+                        <button type="submit" class="p-2 text-slate-400 hover:text-red-500 rounded-xl transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             </div>
         </header>
 
-        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-8">
-                <?php if ($messageSucces): ?>
-                    <div class="p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-2xl text-sm">
-                        <?php echo htmlspecialchars($messageSucces); ?>
-                    </div>
-                <?php endif; ?>
-                <?php if ($messageErreur): ?>
-                    <div class="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-sm">
-                        <?php echo htmlspecialchars($messageErreur); ?>
-                    </div>
-                <?php endif; ?>
+        <!-- Main content -->
+        <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+            <?php if ($messageSucces): ?>
+                <div class="p-4 bg-green-50 border border-green-200 text-green-700 rounded-2xl text-sm font-semibold shadow-sm">
+                    <?php echo htmlspecialchars($messageSucces); ?>
+                </div>
+            <?php endif; ?>
+            <?php if ($messageErreur): ?>
+                <div class="p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-sm font-semibold shadow-sm">
+                    <?php echo htmlspecialchars($messageErreur); ?>
+                </div>
+            <?php endif; ?>
 
+            <!-- Menu Section -->
+            <div id="menu" class="space-y-6">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-white mb-6">Notre Menu Gourmand</h2>
-                    <?php if (empty($plats)): ?>
-                        <div class="p-8 bg-slate-900/40 border border-slate-800 rounded-3xl text-center text-slate-400">
-                            Aucun plat n'est disponible actuellement. Revenez plus tard !
-                        </div>
-                    <?php else: ?>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <?php foreach ($plats as $plat): ?>
-                                <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between hover:border-amber-500/30 transition-all duration-300 shadow-lg hover:shadow-amber-500/5">
-                                    <div>
-                                        <div class="flex justify-between items-start gap-4 mb-3">
-                                            <h3 class="text-lg font-bold text-white"><?php echo htmlspecialchars($plat['nom']); ?></h3>
-                                            <span class="text-amber-400 font-extrabold text-lg whitespace-nowrap"><?php echo number_format($plat['prix'], 0, ',', ' '); ?> FCFA</span>
-                                        </div>
-                                        <p class="text-sm text-slate-400 leading-relaxed mb-6"><?php echo htmlspecialchars($plat['description']); ?></p>
-                                    </div>
-                                    <form action="index.php" method="POST" class="flex gap-3">
-                                        <input type="hidden" name="action" value="ajouter_panier">
-                                        <input type="hidden" name="id_plat" value="<?php echo $plat['id']; ?>">
-                                        <input type="number" name="quantite" value="1" min="1" class="w-16 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-center focus:outline-none focus:border-amber-500 text-white font-bold">
-                                        <button type="submit" class="flex-1 py-2 px-4 bg-amber-500 hover:bg-amber-600 active:scale-[0.98] text-slate-950 font-bold rounded-xl transition-all duration-300 shadow-md">
-                                            Ajouter
-                                        </button>
-                                    </form>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+                    <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase">Notre menu complet</h2>
+                    <p class="text-sm text-slate-500 mt-1 font-semibold">Fait maison, avec amour et rapidité.</p>
                 </div>
 
-                <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-white mb-6">Suivi de vos commandes</h2>
-                    <?php if (empty($commandesClient)): ?>
-                        <div class="p-8 bg-slate-900/40 border border-slate-800 rounded-3xl text-center text-slate-400 text-sm">
-                            Vous n'avez pas encore passé de commande.
-                        </div>
-                    <?php else: ?>
-                        <div class="space-y-4">
-                            <?php foreach (array_reverse($commandesClient) as $cmd): ?>
-                                <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                                    <div>
-                                        <div class="flex items-center gap-3 mb-1">
-                                            <span class="font-bold text-white"><?php echo $cmd['id_commande']; ?></span>
-                                            <?php 
-                                            $statutClass = 'bg-slate-800 text-slate-400';
-                                            if ($cmd['statut'] === 'En attente') $statutClass = 'bg-amber-500/10 border border-amber-500/20 text-amber-400';
-                                            elseif ($cmd['statut'] === 'En préparation') $statutClass = 'bg-orange-500/10 border border-orange-500/20 text-orange-400';
-                                            elseif ($cmd['statut'] === 'En livraison') $statutClass = 'bg-blue-500/10 border border-blue-500/20 text-blue-400';
-                                            ?>
-                                            <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold <?php echo $statutClass; ?>">
-                                                <?php echo $cmd['statut']; ?>
-                                            </span>
-                                        </div>
-                                        <div class="text-xs text-slate-400">
-                                            Total : <?php echo number_format(calculerTotalCommande($cmd['lignes']), 0, ',', ' '); ?> FCFA
-                                        </div>
-                                    </div>
-                                    <div class="text-xs text-slate-400">
-                                        <?php if ($cmd['id_livreur']): ?>
-                                            Livreur assigné
-                                        <?php else: ?>
-                                            En cours d'affectation
-                                        <?php endif; ?>
+                <?php if (empty($plats)): ?>
+                    <div class="p-8 bg-white border border-slate-100 rounded-3xl text-center text-slate-400">
+                        Aucun plat n'est disponible actuellement.
+                    </div>
+                <?php else: ?>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <?php foreach ($plats as $plat): ?>
+                            <div class="bg-white border border-slate-100 rounded-3xl p-6 flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900 mb-1"><?php echo htmlspecialchars($plat['nom']); ?></h3>
+                                    <p class="text-sm text-slate-400 leading-relaxed mb-4"><?php echo htmlspecialchars($plat['description']); ?></p>
+                                    <div class="text-[#b45309] font-extrabold text-sm mb-4">
+                                        💰 <?php echo number_format($plat['prix'], 0, ',', ' '); ?> CFA
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
+                                <form action="index.php" method="POST">
+                                    <input type="hidden" name="action" value="ajouter_panier">
+                                    <input type="hidden" name="id_plat" value="<?php echo $plat['id']; ?>">
+                                    <input type="hidden" name="quantite" value="1">
+                                    <button type="submit" class="w-full py-2.5 bg-[#c2272d] hover:bg-[#a61f24] active:scale-[0.98] text-white font-bold rounded-xl text-sm transition-all duration-300 shadow-sm flex items-center justify-center gap-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        Ajouter au panier
+                                    </button>
+                                </form>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
-            <div class="space-y-8">
-                <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sticky top-24 shadow-2xl">
-                    <h2 class="text-xl font-bold text-white mb-6 flex items-center justify-between">
-                        <span>Mon Panier</span>
-                        <span class="bg-slate-800 text-amber-400 text-xs px-2.5 py-1 rounded-full font-bold">
-                            <?php echo count($panier); ?> articles
-                        </span>
-                    </h2>
+            <!-- Panier Section -->
+            <div id="panier" class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm">
+                <div class="bg-[#eaf0f9] px-6 py-4 border-b border-slate-100 flex items-center gap-2 text-slate-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <h3 class="font-extrabold uppercase text-sm tracking-wider">Votre Panier</h3>
+                </div>
 
+                <div class="p-6">
                     <?php if (empty($panier)): ?>
-                        <div class="py-12 text-center text-slate-500 text-sm">
-                            Votre panier est vide. Sélectionnez de délicieux plats à gauche pour commencer.
+                        <div class="py-12 text-center text-slate-400 text-sm">
+                            Votre panier est vide. Sélectionnez des articles dans notre menu.
                         </div>
                     <?php else: ?>
-                        <div class="space-y-4 max-h-[300px] overflow-y-auto pr-2 mb-6">
+                        <div class="space-y-6">
                             <?php foreach ($panier as $ligne): ?>
                                 <?php $plat = getPlatById($ligne['id_plat']); ?>
                                 <?php if ($plat): ?>
-                                    <div class="flex items-center justify-between border-b border-slate-800/60 pb-3 last:border-0 last:pb-0">
-                                        <div>
-                                            <h4 class="text-sm font-semibold text-white"><?php echo htmlspecialchars($plat['nom']); ?></h4>
-                                            <span class="text-xs text-slate-400"><?php echo number_format($plat['prix'], 0, ',', ' '); ?> FCFA x <?php echo $ligne['quantite']; ?></span>
+                                    <div class="flex items-center justify-between border-b border-slate-100/60 pb-5 last:border-0 last:pb-0">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 border border-slate-150 flex-shrink-0">
+                                                <img src="<?php echo htmlspecialchars($plat['image'] ?? 'images/burger_xl.jpg'); ?>" alt="<?php echo htmlspecialchars($plat['nom']); ?>" class="w-full h-full object-cover">
+                                            </div>
+                                            <div>
+                                                <h4 class="text-base font-bold text-slate-900"><?php echo $ligne['quantite']; ?>x <?php echo htmlspecialchars($plat['nom']); ?></h4>
+                                                <p class="text-xs text-slate-400 mt-0.5">Avec amour</p>
+                                                <form action="index.php" method="POST" class="inline mt-1 block">
+                                                    <input type="hidden" name="action" value="supprimer_panier">
+                                                    <input type="hidden" name="id_plat" value="<?php echo $plat['id']; ?>">
+                                                    <button type="submit" class="text-xs font-bold text-red-500 hover:text-red-700 hover:underline transition-all">
+                                                        Retirer
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
-                                        <div class="flex items-center gap-3">
-                                            <span class="text-sm font-bold text-white"><?php echo number_format($plat['prix'] * $ligne['quantite'], 0, ',', ' '); ?> FCFA</span>
-                                            <form action="index.php" method="POST">
-                                                <input type="hidden" name="action" value="supprimer_panier">
-                                                <input type="hidden" name="id_plat" value="<?php echo $plat['id']; ?>">
-                                                <button type="submit" class="text-red-400 hover:text-red-300 transition-colors">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        </div>
+                                        <span class="text-base font-extrabold text-slate-900">
+                                            <?php echo number_format($plat['prix'] * $ligne['quantite'], 0, ',', ' '); ?> CFA
+                                        </span>
                                     </div>
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                        </div>
 
-                        <div class="border-t border-slate-800 pt-6 space-y-4">
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-slate-400">Sous-total</span>
-                                <span class="font-semibold text-white"><?php echo number_format($totalPanier, 0, ',', ' '); ?> FCFA</span>
+                            <div class="border-t border-dashed border-slate-200 pt-6 flex justify-between items-center text-sm font-bold text-slate-700">
+                                <span class="uppercase tracking-wider">Total à payer</span>
+                                <span class="text-xl font-black text-[#c2272d]">
+                                    <?php echo number_format($totalPanier, 0, ',', ' '); ?> CFA
+                                </span>
                             </div>
-                            <div class="flex justify-between items-center text-base border-t border-slate-800/40 pt-4">
-                                <span class="text-slate-200 font-bold">Total à payer</span>
-                                <span class="text-xl font-black text-amber-400"><?php echo number_format($totalPanier, 0, ',', ' '); ?> FCFA</span>
-                            </div>
-
-                            <form action="index.php" method="POST" class="pt-4">
-                                <input type="hidden" name="action" value="valider_commande">
-                                <button type="submit" class="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-extrabold rounded-2xl shadow-lg hover:shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
-                                    Simuler le paiement
-                                </button>
-                            </form>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
+
+            <!-- Paiement Section -->
+            <?php if (!empty($panier)): ?>
+                <div class="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm space-y-6">
+                    <div class="flex items-center gap-2 border-b border-slate-100 pb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                        <h3 class="font-extrabold text-slate-800 uppercase text-sm tracking-wider">Paiement en ligne</h3>
+                    </div>
+
+                    <form action="index.php" method="POST" class="space-y-4">
+                        <input type="hidden" name="action" value="valider_commande">
+                        
+                        <div class="space-y-1">
+                            <label for="card_number" class="text-xs font-bold uppercase tracking-wider text-slate-400">Numéro de carte</label>
+                            <div class="relative">
+                                <input type="text" id="card_number" required placeholder="0000 0000 0000 0000" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-450 focus:outline-none focus:border-[#c2272d] focus:ring-1 focus:ring-[#c2272d]">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label for="card_exp" class="text-xs font-bold uppercase tracking-wider text-slate-400">Expiration</label>
+                                <input type="text" id="card_exp" required placeholder="MM/YY" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-450 focus:outline-none focus:border-[#c2272d] focus:ring-1 focus:ring-[#c2272d] text-center">
+                            </div>
+                            <div class="space-y-1">
+                                <label for="card_cvv" class="text-xs font-bold uppercase tracking-wider text-slate-400">CVV</label>
+                                <input type="password" id="card_cvv" required placeholder="***" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-450 focus:outline-none focus:border-[#c2272d] focus:ring-1 focus:ring-[#c2272d] text-center">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full mt-4 py-4 bg-[#c2272d] hover:bg-[#a61f24] active:scale-[0.98] text-white font-extrabold rounded-2xl shadow-lg shadow-red-700/10 hover:shadow-red-700/25 transition-all duration-300 uppercase tracking-wide text-sm">
+                            Valider et Payer <?php echo number_format($totalPanier, 0, ',', ' '); ?> CFA
+                        </button>
+                    </form>
+                </div>
+            <?php endif; ?>
+
+            <!-- Suivi des commandes -->
+            <div id="commandes" class="space-y-6">
+                <div>
+                    <h2 class="text-xs font-black tracking-widest text-slate-400 uppercase">Suivi de vos commandes</h2>
+                    <p class="text-sm text-slate-500 mt-1 font-semibold">Consultez le statut de vos commandes en temps réel.</p>
+                </div>
+
+                <?php if (empty($commandesClient)): ?>
+                    <div class="p-8 bg-white border border-slate-100 rounded-3xl text-center text-slate-400 text-sm">
+                        Vous n'avez pas encore passé de commande.
+                    </div>
+                <?php else: ?>
+                    <div class="space-y-4">
+                        <?php foreach (array_reverse($commandesClient) as $cmd): ?>
+                            <div class="bg-white border border-slate-100 rounded-2xl p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:shadow-sm transition-all duration-200">
+                                <div>
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="font-bold text-slate-900">#<?php echo $cmd['id_commande']; ?></span>
+                                        <?php if (isset($cmd['heure'])): ?>
+                                            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold"><?php echo $cmd['heure']; ?></span>
+                                        <?php endif; ?>
+                                        
+                                        <?php 
+                                        $statutClass = 'bg-slate-150 text-slate-600';
+                                        if ($cmd['statut'] === 'En attente') $statutClass = 'bg-amber-50 text-amber-600 border border-amber-100';
+                                        elseif ($cmd['statut'] === 'En préparation') $statutClass = 'bg-orange-50 text-orange-600 border border-orange-100';
+                                        elseif ($cmd['statut'] === 'En livraison') $statutClass = 'bg-blue-50 text-blue-600 border border-blue-100';
+                                        elseif ($cmd['statut'] === 'Livrée') $statutClass = 'bg-green-50 text-green-600 border border-green-100';
+                                        ?>
+                                        <span class="text-xs px-2.5 py-0.5 rounded-full font-bold <?php echo $statutClass; ?>">
+                                            <?php echo $cmd['statut']; ?>
+                                        </span>
+                                    </div>
+                                    <div class="text-xs text-slate-500 font-semibold">
+                                        Total : <?php echo number_format(calculerTotalCommande($cmd['lignes']), 0, ',', ' '); ?> CFA
+                                    </div>
+                                </div>
+                                <div class="text-xs font-semibold text-slate-500 flex items-center gap-2">
+                                    <?php if ($cmd['statut'] === 'En livraison'): ?>
+                                        <span class="flex h-2 w-2 relative">
+                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                        </span>
+                                        En cours de livraison
+                                    <?php elseif ($cmd['statut'] === 'Livrée'): ?>
+                                        <span class="text-green-500">✓ Livrée avec succès</span>
+                                    <?php elseif ($cmd['statut'] === 'En préparation'): ?>
+                                        <span class="text-orange-500">En cours de préparation...</span>
+                                    <?php else: ?>
+                                        <span>En attente de validation</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </main>
+
         <?php
         $aDesLivraisonsEnCours = false;
         foreach ($commandesClient as $cmd) {
-            if ($cmd['statut'] === 'En livraison') {
+            if ($cmd['statut'] === 'En livraison' || $cmd['statut'] === 'En préparation' || $cmd['statut'] === 'En attente') {
                 $aDesLivraisonsEnCours = true;
                 break;
             }
         }
         if ($aDesLivraisonsEnCours): ?>
+            <!-- Auto-refresh every 5 seconds to get updates on the delivery state -->
             <script>
                 setTimeout(function() {
                     window.location.reload();
