@@ -106,7 +106,8 @@ if (php_sapi_name() === 'cli') {
                             'statut' => 'En attente',
                             'lignes' => $_SESSION['panier'],
                             'id_livreur' => null,
-                            'paiement' => 'Accepte'
+                            'paiement' => 'Accepte',
+                            'heure' => date('H:i')
                         ];
                         saveCommande($commande);
                         $_SESSION['panier'] = [];

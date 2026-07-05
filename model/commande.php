@@ -11,11 +11,33 @@ if (!isset($_SESSION['commandes'])) {
             'client_id' => 1,
             'statut' => 'En attente',
             'lignes' => [
-                ['id_plat' => 1, 'quantite' => 1],
-                ['id_plat' => 3, 'quantite' => 2]
+                ['id_plat' => 1, 'quantite' => 1]
             ],
             'id_livreur' => null,
-            'paiement' => 'Accepte'
+            'paiement' => 'Accepte',
+            'heure' => '12:30'
+        ],
+        [
+            'id_commande' => 'CMD-1041',
+            'client_id' => 2,
+            'statut' => 'En attente',
+            'lignes' => [
+                ['id_plat' => 2, 'quantite' => 1]
+            ],
+            'id_livreur' => null,
+            'paiement' => 'Accepte',
+            'heure' => '12:25'
+        ],
+        [
+            'id_commande' => 'CMD-1040',
+            'client_id' => 1,
+            'statut' => 'En préparation',
+            'lignes' => [
+                ['id_plat' => 3, 'quantite' => 1]
+            ],
+            'id_livreur' => null,
+            'paiement' => 'Accepte',
+            'heure' => '12:15'
         ]
     ];
 }

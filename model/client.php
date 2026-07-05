@@ -5,7 +5,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['clients'])) {
-    $_SESSION['clients'] = [];
+    $_SESSION['clients'] = [
+        ['id' => 1, 'nom' => 'Jean Dupont', 'email' => 'jean.dupont@example.com'],
+        ['id' => 2, 'nom' => 'Sophie Martin', 'email' => 'sophie.martin@example.com']
+    ];
 }
 
 function getClients() {

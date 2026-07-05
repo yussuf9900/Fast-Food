@@ -8,21 +8,24 @@ if (!isset($_SESSION['plats'])) {
     $_SESSION['plats'] = [
         [
             'id' => 1,
-            'nom' => 'Burger XL',
+            'nom' => 'Double Cheese Burger',
             'prix' => 3500,
-            'description' => 'Un délicieux double cheese burger servi avec frites.'
+            'description' => 'Pain brioché, steak, fromage fondu.',
+            'image' => 'images/burger_xl.jpg'
         ],
         [
             'id' => 2,
-            'nom' => 'Pizza Reine',
-            'prix' => 5000,
-            'description' => 'Pizza tomate, jambon, champignons frais et mozzarella fondante.'
+            'nom' => 'Pizza Margherita',
+            'prix' => 4000,
+            'description' => 'Tomate, mozzarella, basilic frais.',
+            'image' => 'images/pizza_reine.jpg'
         ],
         [
             'id' => 3,
-            'nom' => 'Tacos Poulet',
-            'prix' => 3000,
-            'description' => 'Tacos poulet croustillant avec frites et sauce fromagère maison.'
+            'nom' => 'Salade César',
+            'prix' => 2500,
+            'description' => 'Salade, poulet grillé, sauce maison.',
+            'image' => 'images/salade_cesar.jpg'
         ]
     ];
 }
