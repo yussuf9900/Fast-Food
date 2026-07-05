@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../view/auth.php';
 require_once __DIR__ . '/../service/auth.php';
 require_once __DIR__ . '/../utils/cli.php';
+require_once __DIR__ . '/../controller/gerant.php';
 
 function executerAuthentification() {
     while (true) {
@@ -33,6 +34,3 @@ function executerEspaceClient() {
     afficherInfo("Espace Client en cours de développement...");
 }
 
-function executerEspaceGerant() {
-    afficherInfo("Espace Gérant en cours de développement...");
-}
