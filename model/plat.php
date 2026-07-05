@@ -5,7 +5,26 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['plats'])) {
-    $_SESSION['plats'] = [];
+    $_SESSION['plats'] = [
+        [
+            'id' => 1,
+            'nom' => 'Burger XL',
+            'prix' => 3500,
+            'description' => 'Un délicieux double cheese burger servi avec frites.'
+        ],
+        [
+            'id' => 2,
+            'nom' => 'Pizza Reine',
+            'prix' => 5000,
+            'description' => 'Pizza tomate, jambon, champignons frais et mozzarella fondante.'
+        ],
+        [
+            'id' => 3,
+            'nom' => 'Tacos Poulet',
+            'prix' => 3000,
+            'description' => 'Tacos poulet croustillant avec frites et sauce fromagère maison.'
+        ]
+    ];
 }
 
 function getPlats() {

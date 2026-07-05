@@ -5,7 +5,19 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['commandes'])) {
-    $_SESSION['commandes'] = [];
+    $_SESSION['commandes'] = [
+        [
+            'id_commande' => 'CMD-1042',
+            'client_id' => 1,
+            'statut' => 'En attente',
+            'lignes' => [
+                ['id_plat' => 1, 'quantite' => 1],
+                ['id_plat' => 3, 'quantite' => 2]
+            ],
+            'id_livreur' => null,
+            'paiement' => 'Accepte'
+        ]
+    ];
 }
 
 function getCommandes() {
